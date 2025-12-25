@@ -22,7 +22,6 @@
             background-color: #f4f4f4;
         }
 
-        /* ヘッダー：モバイルでは少しコンパクトに */
         header {
             background-color: var(--toshin-green);
             color: white;
@@ -38,21 +37,17 @@
             text-align: center;
         }
 
-        /* メインレイアウト */
         .main-container {
             display: flex;
             flex: 1;
-            overflow: hidden; /* デスクトップ用 */
         }
 
-        /* 左側：講義リスト（サイドバー） */
+        /* サイドバー */
         .sidebar {
             width: 350px;
             background-color: white;
             border-right: 1px solid var(--border-color);
             overflow-y: auto;
-            display: flex;
-            flex-direction: column;
         }
 
         .sidebar-header {
@@ -67,17 +62,13 @@
         }
 
         .video-item {
-            padding: 18px 20px; /* タップしやすく少し広めに */
+            padding: 18px 20px;
             border-bottom: 1px solid #eee;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 12px;
-            -webkit-tap-highlight-color: transparent; /* モバイルのタップ青枠消し */
-        }
-
-        .video-item:active {
-            background-color: #e8eee8;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .video-item.active {
@@ -99,11 +90,10 @@
             flex-shrink: 0;
         }
 
-        /* 右側：メインコンテンツ */
+        /* メインコンテンツ */
         .content {
             flex: 1;
             padding: 20px;
-            overflow-y: auto;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -139,54 +129,91 @@
             font-size: 1.25rem;
             margin: 0 0 10px 0;
             color: var(--toshin-green);
-            line-height: 1.4;
         }
 
-        #display-desc {
-            font-size: 0.9rem;
+        /* フッター */
+        footer {
+            background: #fff;
+            padding: 15px;
+            text-align: center;
+            font-size: 0.8rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        footer a {
             color: #666;
-            margin: 0;
+            text-decoration: underline;
+            cursor: pointer;
         }
 
-        /* --- モバイル対応 (768px以下) --- */
+        /* --- 利用規約モーダル --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: none; /* 初期は非表示 */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .modal-content {
+            background: white;
+            width: 100%;
+            max-width: 600px;
+            max-height: 80vh;
+            border-radius: 10px;
+            padding: 25px;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--toshin-green);
+            border-bottom: 2px solid var(--toshin-accent);
+            padding-bottom: 10px;
+        }
+
+        .modal-body {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #444;
+        }
+
+        .modal-body h4 {
+            margin: 15px 0 5px 0;
+            font-size: 0.95rem;
+        }
+
+        .close-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: var(--toshin-green);
+            color: white;
+            text-align: center;
+            border: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* モバイル対応 */
         @media (max-width: 768px) {
-            .main-container {
-                flex-direction: column;
-                overflow: visible; /* 全体スクロールを許可 */
-            }
-
-            .sidebar {
-                width: 100%;
-                order: 2; /* 動画と説明の後に配置 */
-                border-right: none;
-                border-top: 1px solid var(--border-color);
-                height: auto;
-                overflow-y: visible;
-            }
-
-            .content {
-                width: 100%;
-                padding: 10px;
-                order: 1; /* 動画エリアを先に表示 */
-                box-sizing: border-box;
-            }
-
-            /* 動画を上部に固定したい場合はここを有効化 */
-            /*
-            .video-wrapper {
-                position: sticky;
-                top: 0;
-                z-index: 50;
-            }
-            */
-
-            .video-title {
-                font-size: 1.1rem;
-            }
-            
-            .video-item {
-                padding: 15px; /* モバイルでは少しコンパクトに */
-            }
+            .main-container { flex-direction: column; }
+            .sidebar { width: 100%; order: 2; height: auto; }
+            .content { width: 100%; padding: 10px; order: 1; }
+            .video-title { font-size: 1.1rem; }
         }
     </style>
 </head>
@@ -199,7 +226,7 @@
 <div class="main-container">
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">講義リスト（全20回）</div>
-        </aside>
+    </aside>
 
     <main class="content">
         <div class="video-wrapper">
@@ -210,6 +237,39 @@
             <p id="display-desc">リストから視聴したい講義を選択すると学習を開始できます。</p>
         </div>
     </main>
+</div>
+
+<footer>
+    <p>© 株式会社Aipath | <a onclick="toggleModal(true)">利用規約</a></p>
+</footer>
+
+<div class="modal-overlay" id="termsModal" onclick="toggleModal(false)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">利用規約</div>
+        <div class="modal-body">
+            <p>本システムを利用するにあたり、以下の事項に同意したものとみなします。</p>
+            
+            <h4>1. 著作権および知的財産権</h4>
+            <p>本システムで配信される動画、テキスト、画像等の一切のコンテンツの著作権は、株式会社Aipathまたは正当な権利を有する第三者に帰属します。</p>
+            
+            <h4>2. 禁止事項</h4>
+            <p>利用者は以下の行為を禁止されます。違反した場合、法的措置をとる場合があります。
+            <ul>
+                <li>動画コンテンツの録画（スクリーンレコード）、撮影、ダウンロード。</li>
+                <li>アカウントの第三者への貸与、または複数人での共有。</li>
+                <li>SNSや動画投稿サイトへの無断転載および二次利用。</li>
+                <li>本システムの運営を妨げる行為。</li>
+            </ul>
+            </p>
+            
+            <h4>3. サービスの中断・変更</h4>
+            <p>システムメンテナンスや不可抗力（災害、通信障害等）により、事前の通知なくサービスを一時中断または内容を変更することがあります。</p>
+            
+            <h4>4. 免責事項</h4>
+            <p>利用者の通信環境に起因する視聴トラブルについて、当社は一切の責任を負いません。また、本講義内容が利用者の特定の目的（試験合格等）を保証するものではありません。</p>
+        </div>
+        <button class="close-btn" onclick="toggleModal(false)">閉じる</button>
+    </div>
 </div>
 
 <script>
@@ -240,34 +300,33 @@
     const player = document.getElementById('main-player');
     const titleDisp = document.getElementById('display-title');
 
+    // モーダル表示切り替え
+    function toggleModal(show) {
+        document.getElementById('termsModal').style.display = show ? 'flex' : 'none';
+        // モーダル表示中に背景スクロールを止める
+        document.body.style.overflow = show ? 'hidden' : 'auto';
+    }
+
     lessons.forEach((lesson, index) => {
         const item = document.createElement('div');
         item.className = 'video-item';
-        item.innerHTML = `
-            <span class="video-num">${index + 1}</span>
-            <span>${lesson.title}</span>
-        `;
+        item.innerHTML = `<span class="video-num">${index + 1}</span><span>${lesson.title}</span>`;
         
         item.onclick = () => {
             document.querySelectorAll('.video-item').forEach(el => el.classList.remove('active'));
             item.classList.add('active');
-            
             player.src = `https://www.youtube.com/embed/${lesson.id}?rel=0&modestbranding=1&autoplay=1`;
             titleDisp.innerText = lesson.title;
-
-            // モバイルの場合、クリック後に動画位置までスムーズスクロール
             if (window.innerWidth <= 768) {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         };
-        
         sidebar.appendChild(item);
     });
 
     window.onload = () => {
         const firstItem = document.querySelector('.video-item');
         if(firstItem) {
-            // 初回読み込み時は自動再生されないよう、クリックイベントのみシミュレート（またはsrcセットのみ）
             firstItem.classList.add('active');
             player.src = `https://www.youtube.com/embed/${lessons[0].id}?rel=0&modestbranding=1`;
             titleDisp.innerText = lessons[0].title;
