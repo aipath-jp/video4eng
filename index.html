@@ -5,10 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>株式会社Aipath | AI × 英語コーチング 映像授業</title>
     <style>
-        /* 東進風カラー定義 */
         :root {
-            --toshin-green: #004d2c; /* 深い緑 */
-            --toshin-accent: #f0f7f4; /* 薄い背景緑 */
+            --toshin-green: #004d2c;
+            --toshin-accent: #f0f7f4;
             --text-color: #333;
             --border-color: #ddd;
         }
@@ -18,34 +17,32 @@
             margin: 0;
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            min-height: 100vh;
             color: var(--text-color);
-            background-color: #f9f9f9;
+            background-color: #f4f4f4;
         }
 
-        /* ヘッダー */
+        /* ヘッダー：モバイルでは少しコンパクトに */
         header {
             background-color: var(--toshin-green);
             color: white;
-            padding: 15px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 12px 20px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            z-index: 10;
+            z-index: 100;
         }
 
         header h1 {
             margin: 0;
-            font-size: 1.2rem;
-            letter-spacing: 1px;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+            text-align: center;
         }
 
         /* メインレイアウト */
         .main-container {
             display: flex;
             flex: 1;
-            overflow: hidden;
+            overflow: hidden; /* デスクトップ用 */
         }
 
         /* 左側：講義リスト（サイドバー） */
@@ -60,24 +57,27 @@
 
         .sidebar-header {
             padding: 15px;
-            background-color: #eee;
+            background-color: #f0f0f0;
             font-weight: bold;
             font-size: 0.9rem;
             border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 5;
         }
 
         .video-item {
-            padding: 15px 20px;
+            padding: 18px 20px; /* タップしやすく少し広めに */
             border-bottom: 1px solid #eee;
             cursor: pointer;
-            transition: background 0.2s;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            -webkit-tap-highlight-color: transparent; /* モバイルのタップ青枠消し */
         }
 
-        .video-item:hover {
-            background-color: var(--toshin-accent);
+        .video-item:active {
+            background-color: #e8eee8;
         }
 
         .video-item.active {
@@ -90,19 +90,19 @@
             background: var(--toshin-green);
             color: white;
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
+            width: 26px;
+            height: 26px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             flex-shrink: 0;
         }
 
         /* 右側：メインコンテンツ */
         .content {
             flex: 1;
-            padding: 30px;
+            padding: 20px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -114,7 +114,9 @@
             max-width: 1000px;
             background-color: black;
             aspect-ratio: 16 / 9;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            overflow: hidden;
         }
 
         iframe {
@@ -126,38 +128,78 @@
         .video-info {
             width: 100%;
             max-width: 1000px;
-            margin-top: 25px;
+            margin-top: 15px;
             background: white;
-            padding: 25px;
+            padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-sizing: border-box;
         }
 
         .video-title {
-            font-size: 1.5rem;
-            margin: 0 0 15px 0;
+            font-size: 1.25rem;
+            margin: 0 0 10px 0;
             color: var(--toshin-green);
-            border-bottom: 2px solid var(--toshin-accent);
-            padding-bottom: 10px;
+            line-height: 1.4;
         }
 
-        /* レスポンシブ対応 */
-        @media (max-width: 900px) {
-            .main-container { flex-direction: column; }
-            .sidebar { width: 100%; height: 300px; }
+        #display-desc {
+            font-size: 0.9rem;
+            color: #666;
+            margin: 0;
+        }
+
+        /* --- モバイル対応 (768px以下) --- */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+                overflow: visible; /* 全体スクロールを許可 */
+            }
+
+            .sidebar {
+                width: 100%;
+                order: 2; /* 動画と説明の後に配置 */
+                border-right: none;
+                border-top: 1px solid var(--border-color);
+                height: auto;
+                overflow-y: visible;
+            }
+
+            .content {
+                width: 100%;
+                padding: 10px;
+                order: 1; /* 動画エリアを先に表示 */
+                box-sizing: border-box;
+            }
+
+            /* 動画を上部に固定したい場合はここを有効化 */
+            /*
+            .video-wrapper {
+                position: sticky;
+                top: 0;
+                z-index: 50;
+            }
+            */
+
+            .video-title {
+                font-size: 1.1rem;
+            }
+            
+            .video-item {
+                padding: 15px; /* モバイルでは少しコンパクトに */
+            }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>株式会社Aipath AI英語コーチング 映像受講システム</h1>
+    <h1>Aipath 映像受講システム</h1>
 </header>
 
 <div class="main-container">
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">文法ビデオガイド（全20回）</div>
-        </div>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">講義リスト（全20回）</div>
+        </aside>
 
     <main class="content">
         <div class="video-wrapper">
@@ -165,15 +207,14 @@
         </div>
         <div class="video-info">
             <h2 id="display-title" class="video-title">講義を選択してください</h2>
-            <p id="display-desc">左側のリストから視聴したい講義を選択すると、学習を開始できます。</p>
+            <p id="display-desc">リストから視聴したい講義を選択すると学習を開始できます。</p>
         </div>
     </main>
 </div>
 
 <script>
-    // 1. YouTubeの動画データを定義 (ここを実際のIDに書き換えてください)
     const lessons = [
-        { id: "ここにID", title: "第01回：文型と動詞の語法" },
+        { id: "VIDEO_ID_1", title: "第01回：文型と動詞の語法" },
         { id: "VIDEO_ID_2", title: "第02回：時制" },
         { id: "VIDEO_ID_3", title: "第03回：助動詞" },
         { id: "VIDEO_ID_4", title: "第04回：態" },
@@ -199,7 +240,6 @@
     const player = document.getElementById('main-player');
     const titleDisp = document.getElementById('display-title');
 
-    // 2. サイドバーを生成
     lessons.forEach((lesson, index) => {
         const item = document.createElement('div');
         item.className = 'video-item';
@@ -209,22 +249,29 @@
         `;
         
         item.onclick = () => {
-            // アクティブ状態の切り替え
             document.querySelectorAll('.video-item').forEach(el => el.classList.remove('active'));
             item.classList.add('active');
             
-            // 動画とタイトルの切り替え
-            player.src = `https://www.youtube.com/embed/${lesson.id}?rel=0&modestbranding=1`;
+            player.src = `https://www.youtube.com/embed/${lesson.id}?rel=0&modestbranding=1&autoplay=1`;
             titleDisp.innerText = lesson.title;
+
+            // モバイルの場合、クリック後に動画位置までスムーズスクロール
+            if (window.innerWidth <= 768) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         };
         
         sidebar.appendChild(item);
     });
 
-    // 初期状態として1本目を読み込み
     window.onload = () => {
         const firstItem = document.querySelector('.video-item');
-        if(firstItem) firstItem.click();
+        if(firstItem) {
+            // 初回読み込み時は自動再生されないよう、クリックイベントのみシミュレート（またはsrcセットのみ）
+            firstItem.classList.add('active');
+            player.src = `https://www.youtube.com/embed/${lessons[0].id}?rel=0&modestbranding=1`;
+            titleDisp.innerText = lessons[0].title;
+        }
     };
 </script>
 
